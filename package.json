@@ -7,7 +7,7 @@
     "server"
   ],
   "scripts": {
-    "dev": "concurrently \"npm run dev -w client\" \"npm run dev -w server\"",
+    "dev": "concurrently \"npm run dev -w client\" \"npm run dev -w server -- --map ../assets/map.ascii --bookings ../assets/bookings.json\" ",
     "build": "npm run build -w client && npm run build -w server",
     "test": "npm run test -w client && npm run test -w server"
   },
@@ -18,7 +18,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/NI-ICK/code-test-hoteltech/issues"
   },
