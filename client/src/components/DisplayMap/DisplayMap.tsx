@@ -1,17 +1,21 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
+import { Cabana } from "../Cabana/Cabana"
+import "./DisplayMap.css"
+import { Popup } from "../Popup/Popup"
 
 export function DisplayMap() {
-  const [resortMap, setResortMap] = useState([])
+  const [resortMap, setResortMap] = useState<string[][]>([])
+  const [message, setMessage] = useState("")
+  const [popupActive, setPopupActive] = useState(false)
 
   useEffect(() => {
     const loadMap = async () => {
       try {
         const result = await axios.get("/api/map")
-        const data = result.data.map
-        setResortMap(data.split("\n").map((row: string) => row.split("")))
+        setResortMap(result.data.map)
       } catch (error) {
-        console.log("Failed to load map", error.message)
+        console.log("Failed to load map", error)
       }
     }
 
@@ -59,74 +63,108 @@ export function DisplayMap() {
     return { type: "invalid", rot: 0 }
   }
 
+  const updateMap = (map: string[][]) => {
+    setResortMap(map)
+  }
+
+  const updateMessage = (message: string) => {
+    setMessage(message)
+    setPopupActive(true)
+
+    setTimeout(() => setPopupActive(false), 3000)
+  }
+
   return (
-    <div
-      className="map"
-      style={{
-        display: "grid",
-        gridTemplateColumns: `repeat(${resortMap[0]?.length || 0}, 4em)`,
-      }}
-    >
-      {resortMap.map((row: string[], y: number) =>
-        row.map((cell: string, x: number) => {
-          switch (cell) {
-            case "W":
-              return <img src="./assets/cabana.png" key={`${x}${y}`} />
-            case "p":
-              return <img src="./assets/pool.png" key={`${x}${y}`} />
-            case "c":
-              return <img src="./assets/houseChimney.png" key={`${x}${y}`} />
-            case ".":
-              return <div key={`${x}${y}`}></div>
-          }
+    <>
+      <div
+        className="map"
+        style={{
+          display: "grid",
+          gridTemplateColumns: `repeat(${resortMap[0]?.length || 0}, 4em)`,
+        }}
+      >
+        {resortMap.map((row: string[], y: number) =>
+          row.map((cell: string, x: number) => {
+            switch (cell) {
+              case "W":
+                return (
+                  <Cabana
+                    key={`${x}:${y}`}
+                    x={x}
+                    y={y}
+                    available
+                    updateMap={updateMap}
+                    updateMessage={updateMessage}
+                  />
+                )
+              case "X":
+                return (
+                  <Cabana
+                    key={`${x}:${y}`}
+                    available={false}
+                    x={x}
+                    y={y}
+                    updateMap={updateMap}
+                    updateMessage={updateMessage}
+                  />
+                )
+              case "p":
+                return <img src="./assets/pool.png" key={`${x}:${y}`} />
+              case "c":
+                return <img src="./assets/houseChimney.png" key={`${x}:${y}`} />
+              case ".":
+                return <div key={`${x}:${y}`}></div>
+            }
 
-          const tile = getTile(resortMap, x, y)
+            const tile = getTile(resortMap, x, y)
 
-          switch (tile.type) {
-            case "cross":
-              return (
-                <img
-                  src="./assets/arrowCrossing.png"
-                  key={`${x}${y}`}
-                  style={{ transform: `rotate(${tile.rot}deg)` }}
-                />
-              )
-            case "split":
-              return (
-                <img
-                  src="./assets/arrowSplit.png"
-                  key={`${x}${y}`}
-                  style={{ transform: `rotate(${tile.rot}deg)` }}
-                />
-              )
-            case "corner":
-              return (
-                <img
-                  src="./assets/arrowCornerSquare.png"
-                  key={`${x}${y}`}
-                  style={{ transform: `rotate(${tile.rot}deg)` }}
-                />
-              )
-            case "straight":
-              return (
-                <img
-                  src="./assets/arrowStraight.png"
-                  key={`${x}${y}`}
-                  style={{ transform: `rotate(${tile.rot}deg)` }}
-                />
-              )
-            case "end":
-              return (
-                <img
-                  src="./assets/arrowEnd.png"
-                  key={`${x}${y}`}
-                  style={{ transform: `rotate(${tile.rot}deg)` }}
-                />
-              )
-          }
-        })
-      )}
-    </div>
+            switch (tile.type) {
+              case "cross":
+                return (
+                  <img
+                    src="./assets/arrowCrossing.png"
+                    key={`${x}:${y}`}
+                    style={{ transform: `rotate(${tile.rot}deg)` }}
+                  />
+                )
+              case "split":
+                return (
+                  <img
+                    src="./assets/arrowSplit.png"
+                    key={`${x}:${y}`}
+                    style={{ transform: `rotate(${tile.rot}deg)` }}
+                  />
+                )
+              case "corner":
+                return (
+                  <img
+                    src="./assets/arrowCornerSquare.png"
+                    key={`${x}:${y}`}
+                    style={{ transform: `rotate(${tile.rot}deg)` }}
+                  />
+                )
+              case "straight":
+                return (
+                  <img
+                    src="./assets/arrowStraight.png"
+                    key={`${x}:${y}`}
+                    style={{ transform: `rotate(${tile.rot}deg)` }}
+                  />
+                )
+              case "end":
+                return (
+                  <img
+                    src="./assets/arrowEnd.png"
+                    key={`${x}:${y}`}
+                    style={{ transform: `rotate(${tile.rot}deg)` }}
+                  />
+                )
+            }
+          })
+        )}
+      </div>
+      <Popup message={message} active={popupActive} />
+    </>
   )
 }
 

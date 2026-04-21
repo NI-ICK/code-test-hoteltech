@@ -7,7 +7,9 @@
     "server"
   ],
   "scripts": {
-    "dev": "concurrently \"npm run dev -w client\" \"npm run dev -w server -- --map ../assets/map.ascii --bookings ../assets/bookings.json\" ",
+    "dev": "node dev.js",
+    "dev:client": "npm run dev -w client",
+    "dev:server": "npm run dev -w server",
     "build": "npm run build -w client && npm run build -w server",
     "test": "npm run test -w client && npm run test -w server"
   },
@@ -24,6 +26,6 @@
   },
   "homepage": "https://github.com/NI-ICK/code-test-hoteltech#readme",
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "child_process": "^1.0.2"
   }
 }

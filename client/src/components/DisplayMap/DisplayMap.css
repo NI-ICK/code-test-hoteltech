@@ -1,0 +1,9 @@
+.map {
+  display: grid;
+  grid-auto-rows: 4em;
+}
+
+.map img {
+  width: 4em;
+  height: 4em;
+}
