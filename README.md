@@ -68,6 +68,10 @@ npm install -D
 
 #### 2. Start the application
 
+```
+npm run dev
+```
+
 You can optionally provide environment variables for custom data paths:
 
 ```
